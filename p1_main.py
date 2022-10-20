@@ -4,7 +4,7 @@
 from flask import Flask, render_template, redirect, request, session
 app = Flask(__name__)
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup 
 import os
 
 
@@ -20,35 +20,30 @@ def home():
 		#se presenta print 
 
 
+  # Se descarga a un fichero local el contenido de la web
+  os.system("wget -O fich.html 'https://es.investing.com/currencies/eur-usd'")
 
+  # Se abre el fichero para leerlo y formatear el html
+  fich = open("fich.html").read()
+  pretty = BeautifulSoup(fich).prettify()
 
+  # Se "parsea" el contenido 
+  bs = BeautifulSoup(pretty, 'lxml')
 
-  # Se realiza una petición a la web
-  url = "https://es.investing.com/currencies/eur-usd"
+  # Se busca la etiqueta donde aparece el dato de la cotización
+  span = bs.find('span', {'class',  "text-2xl"})
 
-  #req = requests.get(url, headers=headers)
-  #print(req.status_code)
+  # Se crea un fichero auxiliar para añadir el dato de cotización
+  fich2 = open("fich2.html","a")
+  fich2.write(span.text)
+  fich2.close()
 
-  #os.system("wget " + url)
-  os.system("wget -o fich https://es.investing.com/currencies/eur-usd")
-
-  # Se comprueba que se devuelve estado OK 
-  #if (req.status_code == 200):
-
-  # Se almacena el contenido de la web
-  # web = BeautifulSoup(req.text, "html.parser")
-
-  # # Se selecciona el div y el span donde se encuentra el dato
-  # div = web.find_all('div', {'class': 'instrument-price_instrument-price__3uw25 flex items-end flex-wrap font-bold'})
-  # span = div.find('span', {'class': 'text-2xl'}).getText()
-
-  # print("%s" % (span))
+  # Se muestra el datoa actual
+  print(span.text)
 
   	#return render_template("Inicio.html") #homepage2
   #else
-  return render_template("Inicio.html") #homepage2
-
-	#print(dato2) 	
+  return render_template("Inicio.html") #homepage2 	
 
 
 #------------------------------------------------------------------
