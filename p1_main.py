@@ -3,77 +3,122 @@
 
 from flask import Flask, render_template, redirect, request, session
 app = Flask(__name__)
+app.secret_key = "ayush" 
 
 from bs4 import BeautifulSoup 
+from datetime import datetime 
 import os
+import time
+import threading
+
+   
 
 
-@app.route("/")
-# """
-#   Página principal de la app
-# """
-def home():  
+def ext_cotizacion():
 
-	#if primera vez que se accede a la app
-		#se extrae el valor
-		#se almacena 
-		#se presenta print 
-
+  # Se obtiene la hora y fecha actual
+  now = datetime.now().strftime('[%d-%m-%Y %H:%M:%S] ')
 
   # Se descarga a un fichero local el contenido de la web
   os.system("wget -O fich.html 'https://es.investing.com/currencies/eur-usd'")
 
   # Se abre el fichero para leerlo y formatear el html
   fich = open("fich.html").read()
-  pretty = BeautifulSoup(fich).prettify()
+  pretty = BeautifulSoup(fich, 'lxml').prettify()
 
   # Se "parsea" el contenido 
   bs = BeautifulSoup(pretty, 'lxml')
 
-  # Se busca la etiqueta donde aparece el dato de la cotización
-  span = bs.find('span', {'class',  "text-2xl"})
+  # Se busca el dato de la cotización en su etiqueta respectiva
+  cotizacion = bs.find('span', {'class',  "text-2xl"})
+  cotizacion_txt = cotizacion.text.strip()
 
   # Se crea un fichero auxiliar para añadir el dato de cotización
   fich2 = open("fich2.html","a")
-  fich2.write(span.text)
+  fich2.write(now)
+  fich2.write(cotizacion_txt)
+  fich2.write(" || ")
   fich2.close()
 
-  # Se muestra el datoa actual
-  print(span.text)
+  # Se muestra el dato y fecha actuales
+  print("-----------------------------")
+  print(now + cotizacion_txt)
+  print("-----------------------------")
 
-  	#return render_template("Inicio.html") #homepage2
-  #else
-  return render_template("Inicio.html") #homepage2 	
+  # Se programa la ejecución en segundo plano de la función cada 2 minutos 
+  threading.Timer(120, ext_cotizacion).start()
 
+
+
+
+@app.route("/")
+# """
+#   Página principal de la app
+# """
+def home(nombre=None):
+
+  if 'email' in session:
+    return render_template("inicio2.html", nombre=session['user'])  
+  
+  else:  
+    ext_cotizacion()
+    return render_template("inicio.html")   
 
 #------------------------------------------------------------------
 
 @app.route('/entrada') 
-# """
-#    Página de entrada de la app
-# """ 
+ # """
+ #    Página de entrada de la app
+ # """ 
 def login():  
 
-	if 'email' in session:
-	    return render_template('Inicio.html') #homepage2 
-	else:
-	    return render_template('Entrada.html') #loginpage3
+  return render_template('entrada.html') 
+
+#------------------------------------------------------------------
+
+@app.route('/entradaOK', methods = ["POST"]) 
+# """
+#    Página de entrada satisfactoria a la app
+# """
+def entrysuccess(nombre=None): 
+
+  if request.method == "POST":        
+    session['email']=request.form['email']
+    session['password'] = request.form['password'] 
+
+    ######comprobar que sí existe ya el correo
+    ###buscar en la bbdd el nombre
+    #session['user'] = 
+
+    return render_template('inicio2.html', nombre=session['user'])  
 
 
 #------------------------------------------------------------------
 
-@app.route('/entradabien',methods = ["POST"]) 
+@app.route("/registro")
+# """
+#     Página de registro de la app
+# """ 
+def register():
+  return render_template('registro.html') 
+
+#------------------------------------------------------------------
+
+@app.route('/registroOK', methods = ["POST"]) 
 # """
 #    Página de entrada satisfactoria a la app
 # """
-def success(): 
+def registersuccess(nombre=None): 
 
-	if request.method == "POST": 				######## 
-   		session['email']=request.form['email']
-   		session['user'] = request.form['name']
-   		session['pass'] = request.form['pass'] 
-   		#session['peticiones'] = 0
-   		return render_template('EntradaBien.html') #success3 	#...,usr = session['user'])
+  if request.method == "POST":        
+    session['email']=request.form['email']
+    session['user'] = request.form['name']
+    session['password'] = request.form['password'] 
+
+    ###comprobar que no existe ya el correo almacenar en bbdd
+    ###almacenar en bbd si no existe
+
+    return render_template('inicio2.html', nombre=session['user'])  #...,usr = session['user'])
 
 #------------------------------------------------------------------
 
@@ -83,25 +128,9 @@ def success():
 # """ 
 def logout():
 
-	if 'email' in session:  
-		session.pop('email',None)  
-		#session.clear()
-		return render_template('Salida.html'); #logoutpage2
-
-	else:  
-		return '<p>El usuario ya ha salido</p>'   
-
-#------------------------------------------------------------------
-
-@app.route("/registro")
-def register():
-# """
-#   	Página de registro de la app
-# """ 
-    if 'email' in session:
-    	session.pop('email',None) 
-        #session.clear()
-    return render_template('Registro.html') #register
+  #session.pop('email',None)  
+  session.clear()
+  return render_template('inicio.html');  
 
 #------------------------------------------------------------------
 
