@@ -1,38 +1,20 @@
-<html>  
+<html> 
 	<head>  
 		<title>Home</title>  
-		
-		<script>   
-		
-			function MediaLocal()
-			{   
-				/*SELECT (nota1 + nota2 + nota3 + nota4 + nota5)/5 FROM `tabla` WHERE id_alumno=1			
-				SUM(columna) / COUNT(columna)
-				AVG
-				is not null...
-				var var1 = document.getElementById("variable1").value;			
-				var var2 = document.getElementById("variable2").value;			
-				var suma = parseInt(var1) + parseInt(var2);			
-				var resultado = confirm("Resultado = " + suma);*/   
-			}
-			
-			function MediaOnline()
-			{
-			
-			}
-			
-		</script>
+		<link rel="stylesheet" href="..\\static\css\estilo.css"> 
 	</head> 
 	
 	<body> 
-		<h1>Bienvenido!</h1>		
-		<a href = "/entrada">Login</a><br>  
-		<a href = "/registro">Registro</a><br>  
+		<h1>¡Bienvenido!</h1>
 		
-		<h3>Media histórica de cotización</h3> 
-		<button onclick="Media()"><h3>Media BBDD local</h3></button>
-		<button onclick="Media()"><h3>Media BBDD online</h3></button>
+		{% if cot_actual %}
+		<h2>Cotización actual: {{ cot_actual }}</h2>
+		{% endif%}
 		
+		<div class="enlaces">
+			<a href = "/entrada">Login</a><br>  
+			<a href = "/registro">Registro</a><br>  
+		</div>
 	</body>  
 </html> 
 

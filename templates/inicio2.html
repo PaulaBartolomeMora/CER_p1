@@ -1,10 +1,42 @@
 <html>  
 	<head>  
-		<title>Home</title>  
+		<title>Home</title> 
+		<link rel="stylesheet" href="..\\static\css\estilo.css"> 
+		
+		<script>   
+		
+			function MediaLocal()
+			{   
+				/*SELECT (nota1 + nota2 + nota3 + nota4 + nota5)/5 FROM `tabla` WHERE id_alumno=1			
+				SUM(columna) / COUNT(columna)
+				AVG
+				is not null...
+				var var1 = document.getElementById("variable1").value;			
+				var var2 = document.getElementById("variable2").value;			
+				var suma = parseInt(var1) + parseInt(var2);			
+				var resultado = confirm("Resultado = " + suma);*/   
+			}
+			
+			function MediaOnline()
+			{
+			
+			}
+			
+		</script>
 	</head> 
 	
 	<body> 
-		<h1>Sesión con el usuario: {{ nombre }}</h1>
-		<a href = "/salida">Logout</a><br>  
+	
+		<h3>Sesión con el usuario: {{ nombre }}</h3>
+		<div class="enlaces">
+			<a href = "/salida">Logout</a><br>
+		</div> 
+		
+		<div class="botones">	
+			<button onclick="MediaLocal()"><h3>Media BBDD local</h3></button>
+			<button onclick="MediaOnline()"><h3>Media BBDD online</h3></button>
+		</div>	
+ 
 	</body>  
+	
 </html> 
