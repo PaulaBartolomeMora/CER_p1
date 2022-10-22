@@ -1,19 +1,24 @@
 
 <html>  
- <head>  
-  <title>Login</title>  
-  <link rel="stylesheet" href="..\\static\css\estilo.css"> 
- </head>  
- <body>  
-  <form method = "POST" action = "./registroOK"> 
-		<h1>Registro</h1>	  
-		
-		<table> 
-			<tr><td>Nombre </td><td><input type = 'name' name = 'name'></td></tr>  	   
-			<tr><td>Email </td><td><input type = 'email' name = 'email'></td></tr>  
-			<tr><td>Password </td><td><input type = 'password' name = 'password'></td></tr>  
-			<tr><td><input type = "submit" value = "Submit"></td></tr>  
-         </table>   
-     </form>  
- </body>  
- </html> 
+	<head>  
+		<title>Login</title>  
+		<link rel="stylesheet" href="..\\static\css\estilo.css"> 
+	</head>  
+	
+	<body>  
+		<form method = "POST" action = "./registroOK"> 
+			<h1>Registro</h1>	  
+			
+			<table> 
+				<tr><td>Nombre </td><td><input type = 'name' name = 'name'></td></tr>  	   
+				<tr><td>Email </td><td><input type = 'email' name = 'email'></td></tr>  
+				<tr><td>Password </td><td><input type = 'password' name = 'password'></td></tr>  
+				<tr><td><input type = "submit" value = "Submit"></td></tr>  
+			</table>   
+		</form>  
+	 
+	 	{% if invalid %}
+			<a>El usuario introducido ya existe</a>
+		{% endif%}
+	</body>  
+</html> 
