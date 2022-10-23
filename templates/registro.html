@@ -1,11 +1,14 @@
 
 <html>  
-	<head>  
+	<head>
+	
 		<title>Login</title>  
 		<link rel="stylesheet" href="..\\static\css\estilo.css"> 
+	
 	</head>  
 	
-	<body>  
+	<body> 
+	
 		<form method = "POST" action = "./registroOK"> 
 			<h1>Registro</h1>	  
 			
@@ -17,8 +20,10 @@
 			</table>   
 		</form>  
 	 
-	 	{% if invalid %}
+	 	{% if invaliduser %}
 			<a>El usuario introducido ya existe</a>
 		{% endif%}
-	</body>  
+		
+	</body>
+	
 </html> 

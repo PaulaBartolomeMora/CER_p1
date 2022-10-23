@@ -1,11 +1,14 @@
 
 <html>  
-	<head>  
+	<head> 
+	
 		<title>Login</title>
 		<link rel="stylesheet" href="..\\static\css\estilo.css">    
+	
 	</head>  
 	 
-	<body>  
+	<body> 
+	
 		<form method = "POST" action = "./entradaOK"> 
 			<h1>Login</h1>	
 			
@@ -16,8 +19,13 @@
 			</table>   
 		</form> 
 		
-	 	{% if invalid %}
+	 	{% if invaliduser %}
 			<a>El usuario introducido no existe</a>
 		{% endif%}
+		{% if invalidpass %}
+			<a>La contraseña introducida es incorrecta</a>
+		{% endif%}
+		
 	</body>  
+	
 </html> 
