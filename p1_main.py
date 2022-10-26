@@ -7,7 +7,7 @@ app.secret_key = "ayush"
 
 from bs4 import BeautifulSoup 
 from datetime import datetime 
-import os, time, threading, uuid, hashlib, re 
+import os, time, threading, uuid, hashlib, re, urllib.request
 
 
 #------------------------------------------------------------------
@@ -62,7 +62,7 @@ def ext_cotizacion():
   print(text)
   print("-----------------------------")
 
-  # Se inserta el dato de cotización y la fecha de extracción en la BBDD
+  # Se inserta el dato de cotización y la fecha de extracción en la BBDD local
   try:
 
     # Lista 1: se añade cotización + fecha actual 
@@ -76,6 +76,13 @@ def ext_cotizacion():
 
   except DataError:
     print('Error al insertar la cotizacion actual en la BBDD')
+
+  # Se formatea primero el valor de cotización a tipo float para poder guardarlo en la BBDD online
+  cotizacion_text = float(cotizacion_text.replace(",", "."))
+
+  # Se inserta el dato en la BBDD online
+  urllib.request.urlopen("https://api.thingspeak.com/update?api_key=7KG4DILLEEP9ZB98&field1=0" + str(cotizacion_text))
+
 
   # Se programa la ejecución en segundo plano de la función cada 2 minutos 
   threading.Timer(120, ext_cotizacion).start()
@@ -273,6 +280,8 @@ def medialocal(avglocal=None):
 def mediaonline(avgonline=None):  
 
   if request.method == "GET":
+
+
     return render_template('inicio2.html', avgonline=5); 
 
 
