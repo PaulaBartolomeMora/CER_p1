@@ -7,7 +7,7 @@ app.secret_key = "ayush"
 
 from bs4 import BeautifulSoup 
 from datetime import datetime 
-import os, time, threading, uuid, hashlib, re, urllib.request
+import os, time, threading, uuid, hashlib, re, urllib.request, json
 
 
 #------------------------------------------------------------------
@@ -62,6 +62,7 @@ def ext_cotizacion():
   print(text)
   print("-----------------------------")
 
+
   # Se inserta el dato de cotización y la fecha de extracción en la BBDD local
   try:
 
@@ -77,12 +78,12 @@ def ext_cotizacion():
   except DataError:
     print('Error al insertar la cotizacion actual en la BBDD')
 
+
   # Se formatea primero el valor de cotización a tipo float para poder guardarlo en la BBDD online
   cotizacion_text = float(cotizacion_text.replace(",", "."))
 
   # Se inserta el dato en la BBDD online
   urllib.request.urlopen("https://api.thingspeak.com/update?api_key=7KG4DILLEEP9ZB98&field1=0" + str(cotizacion_text))
-
 
   # Se programa la ejecución en segundo plano de la función cada 2 minutos 
   threading.Timer(120, ext_cotizacion).start()
@@ -208,7 +209,7 @@ def registersuccess(nombre=None, email=None, password=None):
 
       # Antes de añadir el usuario y sus datos se comprueba que no existe ya en la BBDD 
       if redis_client.exists(session['email']) == 0:
-        redis_client.hset(session['email'], mapping={"user": session['user'], "password": codif_password})
+        redis_client.hset(session['email'], mapping={"user": session['user'], "password": codif_password, "pet1":0, "pet2":0})
         print(redis_client.hgetall(session['email']))
 
         # Se muestra en la web de inicio el nombre del usuario que se ha registrado 
@@ -246,7 +247,7 @@ def logout(cot_actual=None):
 #    Botón de cálculo de la media del historial de cotizaciones de la BBDD redis (local) 
 # """
 
-def medialocal(avglocal=None):  
+def medialocal(avglocal=None, npet1=0):  
 
   if request.method == "GET":
     
@@ -263,10 +264,15 @@ def medialocal(avglocal=None):
       totalsum += valor
 
     # Se realiza el cálculo de la media redondeando a 4 decimales
-    avglocal = round(totalsum/n_cot, 4)
+    avglocal = round(totalsum/n_cot, 5)
     print("Media local: " + str(avglocal))
 
-    return render_template('inicio2.html', avglocal=avglocal); 
+    # Se incrementa en uno el número de peticiones
+    npet = int(redis_client.hget(session['email'], 'pet1'))
+    npet = npet + 1
+    redis_client.hset(session['email'], mapping={"pet1":npet})
+
+    return render_template('inicio2.html', avglocal=avglocal, npet1=npet); 
 
 
 #------------------------------------------------------------------
@@ -277,12 +283,35 @@ def medialocal(avglocal=None):
 #    Botón de cálculo de la media del historial de cotizaciones de la BBDD redis (local) 
 # """
 
-def mediaonline(avgonline=None):  
+def mediaonline(avgonline=None, npet2=0):  
 
   if request.method == "GET":
+ 
+    n_cot = 0
+    totalsum = 0.0
+    n_cot = 60
 
+    # Se extrae el archivo json con los valores y se carga como diccionario
+    url_json = urllib.request.urlopen('https://api.thingspeak.com/channels/1905933/feeds.json?results=' + str(n_cot))
+    data = json.loads(url_json.read())
+    
+    for i in range(0, n_cot):
+      valor = data['feeds'][i]['field1']
 
-    return render_template('inicio2.html', avgonline=5); 
+      # Se formatea el valor de cotización a tipo float para poder operar
+      valor = float(valor.replace(",", "."))
+      totalsum += valor
+
+    # Se realiza el cálculo de la media redondeando a 4 decimales
+    avgonline = round(totalsum/n_cot, 5)
+    print("Media online: " + str(avgonline))
+
+    # Se incrementa en uno el número de peticiones
+    npet = int(redis_client.hget(session['email'], 'pet2'))
+    npet = npet + 1
+    redis_client.hset(session['email'], mapping={"pet2":npet})
+
+    return render_template('inicio2.html', avgonline=avgonline, npet2=npet); 
 
 
 #------------------------------------------------------------------

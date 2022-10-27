@@ -13,6 +13,9 @@
 			<a href = "/salida">Logout</a><br>
 		</div> 
 		
+		<iframe width="450" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/1905933/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=step"></iframe>
+
+		
 		<h4 class="botones">
 		
 			<form action="./medialocal"	method="GET">
@@ -26,6 +29,12 @@
 		</h4>
 		
 		<h3> {{ avglocal }} {{ avgonline }} </h3>
+		
+		{% if npet1 %}
+		<h3> Número de peticiones locales: {{ npet1 }} </h3>
+		{% elif npet2 %}
+		<h3> Número de peticiones online: {{ npet2 }} </h3>
+		{% endif%}
  
 	</body>  
 	
