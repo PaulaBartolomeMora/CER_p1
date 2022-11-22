@@ -1,12 +1,31 @@
-<html>  
+<html> 
 	<head>  
-		<title>Inicio</title>  
+	
+		<title>Home</title>  
+		<link rel="stylesheet" href="..\\static\css\estilo.css"> 
+	
 	</head> 
 	
-	<body>   
-		<h3>Bienvenido</h3>  
-		<a href = "/entrada">ENTRADA</a><br>  
-		<a href = "/registro">REGISTRO</a><br>  
-		<a href = "/salida">SALIDA</a><br>  
+	<body> 
+	
+		<h1>¡Bienvenido!</h1>
+		
+		{% if cot_actual %}
+		<h2>Cotización actual: {{ cot_actual }}</h2>
+		{% endif%}
+		
+		<div class="enlaces">
+			<a href = "/entrada">Login</a><br>  
+			<a href = "/registro">Registro</a><br>  
+		</div>
+		
 	</body>  
+	
 </html> 
+
+
+
+
+
+
+
